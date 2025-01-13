@@ -424,7 +424,11 @@ impl<T: Pod + ShaderSize> BufferTable<T> {
             if n == count {
                 // Found a range of 'count' consecutive entries. Consume it.
                 let index = self.free_indices[s];
-                self.free_indices.splice(s..=i, []);
+                let start = s;
+                let end = (i + 1).min(self.free_indices.len());
+                if end >= start {
+                    self.free_indices.splice(start..end, []);
+                }
                 index
             } else {
                 // No free range for 'count' consecutive entries. Allocate at end instead.
